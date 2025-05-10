@@ -1,0 +1,16 @@
+numpy
+pandas
+Pillow
+matplotlib
+scikit-learn
+tensorflow
+dvc[s3]    
+mlflow     
+python-dotenv 
+onnx
+tf2onnx    
+onnxruntime
+boto3    
+flake8
+black
+pytest
