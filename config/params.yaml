@@ -1,0 +1,20 @@
+# config/params.yaml
+
+# Data parameters
+IMAGE_HEIGHT: 224
+IMAGE_WIDTH: 224
+NUM_CHANNELS: 3 # RGB
+
+# Model parameters
+NUM_CLASSES: 1 # Binary classification: 0 for NORMAL, 1 for PNEUMONIA
+
+# Training parameters
+BATCH_SIZE: 32
+EPOCHS: 15 # Start with a moderate number of epochs
+LEARNING_RATE: 0.001
+
+# Paths (relative to project root, will be joined with project_root in scripts)
+PROCESSED_METADATA_CSV: "data/processed/metadata.csv"
+SAVED_MODEL_DIR: "models/"
+SAVED_MODEL_NAME: "pneumonia_cnn_model.keras" # Keras H5 format
+MLFLOW_EXPERIMENT_NAME: "PneumoniaDetection"
