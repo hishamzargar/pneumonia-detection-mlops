@@ -1,0 +1,5 @@
+outs:
+- md5: 43dedab9414a4c21f3c4cdedc3ea5bf8
+  size: 617788270
+  hash: md5
+  path: pneumonia_cnn_model_586b943793b043bbbc89476d8c272d13.keras
