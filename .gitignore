@@ -6,3 +6,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+
+#Notebook
+
+.ipynb_checkpoints/
