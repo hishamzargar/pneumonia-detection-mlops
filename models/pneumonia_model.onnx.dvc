@@ -1,0 +1,5 @@
+outs:
+- md5: 1bee978575042069d39940522dd61f9e
+  size: 205910609
+  hash: md5
+  path: pneumonia_model.onnx
