@@ -1,0 +1,80 @@
+name: Deploy Pneumonia Detection Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: "us-east-1"
+  ECR_REPOSITORY_PRIVATE: "135717303479.dkr.ecr.us-east-1.amazonaws.com/pneumonia-detection-repository"
+  LAMBDA_FUNCTION_NAME: "PneumoniaDetectionFunction"
+  IMAGE_NAME: "pneumonia-lambda-x86-64" # Local Docker image name
+
+jobs:
+  build-and-push-to-ecr:
+    name: Build and Push Docker Image to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR (Public or Private)
+        id: login-ecr
+        run: |
+          uses: aws-actions/amazon-ecr-login@v2
+          id: login-ecr-private 
+          with:
+            registries: ${{ env.ECR_REPOSITORY_PRIVATE | cut -d'/' -f1 }}
+          run: echo "ECR_REPOSITORY_URI=${{ env.ECR_REPOSITORY_PRIVATE }}" >> $GITHUB_ENV
+
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          IMAGE_TAG: ${{ github.sha }} # Use Git SHA for unique image tag
+        run: |
+          docker build -t $IMAGE_NAME ./app_lambda/
+          docker tag $IMAGE_NAME:latest $ECR_REPOSITORY_URI:$IMAGE_TAG
+          docker tag $IMAGE_NAME:latest $ECR_REPOSITORY_URI:latest # Also tag as latest
+          docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
+          docker push $ECR_REPOSITORY_URI:latest
+          echo "IMAGE_URI=$ECR_REPOSITORY_URI:$IMAGE_TAG" >> $GITHUB_ENV # Pass image URI to next job
+
+      # Output the image URI for the next job
+      - name: Set image URI output
+        id: build-image
+        run: echo "image_uri=${{ env.IMAGE_URI }}" >> $GITHUB_OUTPUT
+
+
+  deploy-to-lambda:
+    name: Deploy to AWS Lambda
+    runs-on: ubuntu-latest
+    needs: build-and-push-to-ecr # This job runs only after the previous one succeeds
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update Lambda function
+        env:
+          # Get the image URI from the output of the build job
+          IMAGE_URI_FROM_BUILD: ${{ needs.build-and-push-to-ecr.outputs.image_uri }}
+          # Fallback or alternative: construct it using the SHA again
+          ECR_IMAGE_URI_WITH_SHA: "${{ env.ECR_REPOSITORY_URI }}:${{ github.sha }}"
+        run: |
+          echo "Updating Lambda function with image: $ECR_IMAGE_URI_WITH_SHA"
+          aws lambda update-function-code \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
+            --image-uri $ECR_IMAGE_URI_WITH_SHA
