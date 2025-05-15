@@ -9,6 +9,14 @@ COPY requirements_lambda.txt ${LAMBDA_TASK_ROOT}/
 RUN pip install --no-cache-dir -r requirements_lambda.txt
 
 # Test basic ONNX Runtime import and initialization right after installation
-RUN python -c "import onnxruntime; print(f'Successfully imported ONNX Runtime version: {onnxruntime.__version__}'); print(f'Available providers: {onnxruntime.get_available_providers()}')"
+RUN echo "Attempting to import numpy..." \
+    && python -c "import numpy; print(f'NumPy version: {numpy.__version__}')" \
+    && echo "Attempting to import Pillow..." \
+    && python -c "import PIL; print(f'Pillow version: {PIL.__version__}')" \
+    && echo "Attempting to import onnxruntime..." \
+    && python -c "import onnxruntime; print(f'ONNX Runtime version: {onnxruntime.__version__}')" \
+    && echo "Attempting to get ONNX Runtime providers..." \
+    && python -c "import onnxruntime; print(f'Available providers: {onnxruntime.get_available_providers()}')" \
+    && echo "All Python import and ONNX Runtime initialization tests passed successfully in Docker build."
 
 CMD [ "app.lambda_handler" ]
