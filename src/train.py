@@ -124,7 +124,7 @@ def train_model():
 
         model_save_dir = PROJECT_ROOT / params['SAVED_MODEL_DIR']
         model_save_dir.mkdir(parents=True, exist_ok=True)
-        model_path_with_run_id = model_save_dir / f"{Path(params['SAVED_MODEL_NAME']).stem}_{run_id}.h5"
+        model_path_with_run_id = model_save_dir / f"{Path(params['SAVED_MODEL_NAME']).stem}_{run_id}{Path(params['SAVED_MODEL_NAME']).suffix}"
 
         callbacks = [
             tf.keras.callbacks.ModelCheckpoint(

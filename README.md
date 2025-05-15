@@ -3,9 +3,6 @@
 ## Overview
 This project demonstrates a comprehensive MLOps pipeline for detecting pneumonia from chest X-ray images. It covers data ingestion and versioning, preprocessing, model training and experimentation, model conversion for optimized inference, deployment as a serverless API, and CI/CD automation.
 
-![High Level Overview](images/highlevelarch.png)
-
-
 ## Features & MLOps Aspects Covered
 * **Data Ingestion & Versioning:** Using DVC to version control the dataset (stored on AWS S3).
 * **Data Preprocessing:** Standard image preparation techniques.
