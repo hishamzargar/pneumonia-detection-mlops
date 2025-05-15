@@ -3,7 +3,7 @@
 ## Overview
 This project demonstrates a comprehensive MLOps pipeline for detecting pneumonia from chest X-ray images. It covers data ingestion and versioning, preprocessing, model training and experimentation, model conversion for optimized inference, deployment as a serverless API, and CI/CD automation.
 
-![Diagram](images/highlevelarch.png)
+![High Level Overview](images/highlevelarch.png)
 
 
 ## Features & MLOps Aspects Covered
@@ -24,8 +24,8 @@ This project demonstrates a comprehensive MLOps pipeline for detecting pneumonia
 * The trained CNN model achieved a validation accuracy of approximately **98.3%** for pneumonia detection.
 * Successfully deployed as a scalable, serverless API endpoint.
 
-![Diagram](images/mlflow1.png)
-![Diagram](images/mlflow2.png)
+![ML-Flow training models](images/mlflow1.png)
+![ML-Flow best models](images/mlflow2.png)
 
 
 ## Directory Structure
